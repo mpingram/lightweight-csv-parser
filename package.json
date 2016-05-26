@@ -1,0 +1,15 @@
+{
+  "name": "lightweight-csv-parser",
+  "version": "1.0.0",
+  "description": "A lightweight csv parser with support for arbitrary separators(csv, tsv, etc.) and quoted fields with arbitrary quote characters.",
+  "main": "lightweight-csv-parser.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": "Michael Ingram",
+  "license": "ISC",
+  "devDependencies": {
+    "jasmine": "^2.4.1",
+    "jasmine-core": "^2.4.1"
+  }
+}

@@ -1,0 +1,6 @@
+{
+"spec_dir": "spec",
+"spec_files": [
+	"lightweight_csv_parser_spec.js"
+	]
+}
