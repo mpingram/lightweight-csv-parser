@@ -13,6 +13,8 @@ function parseCSV(input, separator, quote) {
   separator = separator || ',';
   quote = quote || '\"';
 
+  // input validation
+  // --------------------
   if (typeof input !== 'string'){
     throw new Error('Invalid input');
   }
@@ -27,10 +29,11 @@ function parseCSV(input, separator, quote) {
      quote === '\n'){
     throw new Error('Invalid quote');
   }
-
   if (input===''){
       return [['']];
   }
+  // ---------------------
+
 
   input = input.split('');
 

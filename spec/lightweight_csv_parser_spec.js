@@ -74,6 +74,17 @@ describe('basic functionality', function(){
 		output = [["1","2","3"],[""],["4","5","6"]];
 		test();
 	});
+
+
+	// The kicker!
+	it('should handle a quoted field then a blank field followed by a newline', function(){
+		input = '1,"2",\n4,5,6';
+		output = [['1','2',''],['4','5','6']];
+		test();
+		input = '"a ""string"" using "" as the quote","multi\nline",\n1,2,"3,4"';
+		output = [['a "string" using " as the quote','multi\nline',''],['1','2','3.4']];
+		test();
+	});
 });
 
 describe('quoted fields', function(){
@@ -176,4 +187,6 @@ describe('alternate quotes', function(){
 		output = [["a \\string\\ using \\ as the quote","multi\nline",""],["1","2","3.4"]];
 		test('.','\\');
 	});
+
+
 })
