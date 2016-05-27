@@ -1,28 +1,3 @@
-// find quote characters in input fields and
-// return array of tuples representing [startIndex, endIndex].
-// Assumes well-formed CSV input.
-function findQuotes(input, separator, quote){
-  separator = separator || ',';
-  quote = quote || '\"';
-
-  if (typeof input !== 'string'){
-      throw new Error('Invalid input at findQuotes');
-    }
-  var output = [];
-  var tuple = [];
-  
-  for (var i=0;i<input.length;i++){
-    if (input[i] === quote){
-      tuple.push(i);
-    }
-    if (tuple.length>1){
-      output.push(tuple);
-      tuple = [];
-    }
-  }
-  return output;
-}
-
 /**
  * CSV Parser.  Takes a string as input and returns
  * an array of arrays (for each row).
@@ -106,8 +81,8 @@ function parseCSV(input, separator, quote) {
 
 // for testing
 try{
-  module.exports.parseCSV = parseCSV;
-  module.exports.findQuotes = findQuotes;
+  module.exports = parseCSV;
+
 } catch (e){
   // we're not running in node,
   // apologize to the compiler

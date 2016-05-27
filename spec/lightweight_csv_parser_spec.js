@@ -1,60 +1,105 @@
 'use strict';
-var parser = require('../lightweight-csv-parser.js');
+var parse = require('../lightweight-csv-parser.js');
+
+// majority of unit tests adapted from codewars problem:
+// http://www.codewars.com/kata/525ca723b6aecee8c900033c
+describe('basic functionality', function(){
+
+	// TODO:
+	// valid csv?
+	// closed quotes?
 	
-var customMatchers = {
-	toBeArrayOfTuples: function(){
-		return{
-			compare: function(actual){
-
-				var result = {};
-				var passed = true;
-
-				if (Array.isArray(actual)){
-					for (var i=0;i<actual.length;i++){
-						if (!Array.isArray(actual[i]) || actual[i].length!==2){
-							passed = false;
-						}
-					}
-				} else {
-					passed = false;
-				}
-
-				result.pass = passed;
-				return result;
-			}
-		};
-	}
-};
-
-describe('parser.findQuotes', function(){
-
-	var testInput = `field 1, field 2, field 3, field 4
-value, valuuuueeeee, vaaaaaalllllluuuuue, val
-ue, välüë, "value", vulae
-v, v, v, "v"
-v"value"alue, valeu, valieu`;
+	var input;
+	var output;
+	function test(){
+		expect(parse(input)).toEqual(output);
+	};
 	
-
-	beforeEach(function(){
-		jasmine.addMatchers(customMatchers);
+	
+	it('should handle a single row', function(){
+		input = '1,2,3';
+		output = [["1","2","3"]];
+		test();
 	});
-
-	it('should throw an error on invalid input', function(){
-		expect( () => { return parser.findQuotes({value: 'nope'}); }).toThrow(new Error('Invalid input at findQuotes'));
+	
+	it('should handle simple input', function(){
+		input = '1,2,3\n4,5,6';
+		output = [["1","2","3"],["4","5","6"]];
+		test();
 	});
-
-	it('should return an array of tuples', function(){
-		expect(parser.findQuotes(testInput)).toBeArrayOfTuples();
-		console.log(parser.findQuotes(testInput));
+	
+	it('should handle empty fields', function(){
+		input = '1,,3\n4,5,\n,7,8';
+		output = [["1","","3"],["4","5",""],["","7","8"]];
+		test();
 	});
-
-	it('should return the correct indices', function(){
-		var validOutput = [
-			[92,98],
-			[116,118],
-			[121,127]
-		];
-		expect(parser.findQuotes(testInput)).toEqual(validOutput);
+	
+	it('should handle spaces within fields', function(){
+		input = '1, 2 ,3\n4,5,6';
+		output = [["1"," 2 ","3"],["4","5","6"]];
+		test();
 	});
+	
+	it('should handle uneven rows', function(){
+		input = '1,2,3,4,5,6\n7,8\n9,10,11,12';
+		output = [["1","2","3","4","5","6"],["7","8"],["9","10","11","12"]];
+		test();
+	});
+	
+	it('should handle empty rows', function(){
+		input = '1,2,3\n\n4,5,6';
+		output = [["1","2","3"],[""],["4","5","6"]];
+		test();
+	});
+});
 
+describe('quoted fields', function(){
+	
+	var input;
+	var output;
+	function test(){
+		expect(parse(input)).toEqual(output);
+	};
+	
+	it('should handle quoted fields', function(){
+		input = '1,"two was here",3\n4,5,6';
+		output = [["1","two was here","3"],["4","5","6"]];
+		test();
+	});
+	
+	it('should handle empty quoted fields', function(){
+		input = '1,"",3\n4,5,6';
+		output = [["1","","3"],["4","5","6"]];
+		test();
+	});
+	
+	it('should handle leading and trailing spaces in quoted fields', function(){
+		input = '1," two ",3\n4,5,6';
+		output = [["1"," two ","3"],["4","5","6"]];
+		test();
+	});
+	
+	it('should handle separators in quoted fields', function(){
+		input = '1,"two, too",3\n4,5,6';
+		output = [["1","two, too","3"],["4","5","6"]];
+		test();
+	});
+	
+	it('should handle multi-line quoted fields', function(){
+		input = '1,"two was\nup there",3\n4,5,6';
+		output = [["1","two was\nup there","3"],["4","5","6"]];
+		test();
+	});
+	
+	it('should handle separators in multiline quoted fields', function(){
+		input = 'one,",,,,,..two,,,,,\n,,,,,,",three\n4,,6';
+		output = [["one",",,,,,..two,,,,,\n,,,,,,","three"],["4","","6"]];
+		test();
+	});
+	
+	it('should handle quote characters within quoted fields', function(){
+		input = '1,"two ""quote""",3\n4,5,6';
+		output = [["1","two \"quote\"","3"],["4","5","6"]];
+		test();
+	});
 });
