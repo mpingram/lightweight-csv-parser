@@ -16,10 +16,15 @@ function parseCSV(input, separator, quote) {
   if (typeof input !== 'string'){
     throw new Error('Invalid input');
   }
-  if (typeof separator !== 'string' || separator.length > 1){
+  if (typeof separator !== 'string' ||
+     separator.length > 1 ||
+     separator === '\n' ||
+     separator === quote){
     throw new Error('Invalid separator');
   }
-  if (typeof quote !== 'string' || quote.length > 1){
+  if (typeof quote !== 'string' ||
+     quote.length > 1 ||
+     quote === '\n'){
     throw new Error('Invalid quote');
   }
 
@@ -43,20 +48,25 @@ function parseCSV(input, separator, quote) {
     if (inQuotes){
       if(input[i] !== quote){
         value += input[i];
-		
-	  // character is quote;
-	  // if the next character is a break it must
-	  // be an unescaped quote.
+		  
+      // character is quote;
+      // if the next character is a break it must
+      // be an unescaped quote.
       } else if (input[i+1] === separator || input[i+1] === '\n' || i+1 === endOfInput){
         inQuotes = false; 
 		
       // else, if the next character is another quote
-	  // this first quote is escaped.
-	  // add the escaped quote to the value and skip past
-	  // the next index, which is a quote.
+      // this first quote is escaped.
+      // add the escaped quote to the value and skip past
+      // the next index, which is a quote.
       } else if (input[i+1] === quote){
         value += quote;
-		i++;
+		    i++;
+
+      // otherwise, what?
+      } else {
+        value += quote;
+        //throw new Error('Invalid CSV at index '+i);
       }
 
     } else if (input[i] === separator){
@@ -83,7 +93,7 @@ function parseCSV(input, separator, quote) {
   }
   
   return output;
-};
+}
 
 
 // for testing

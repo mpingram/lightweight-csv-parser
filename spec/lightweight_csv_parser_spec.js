@@ -1,20 +1,43 @@
 'use strict';
 var parse = require('../lightweight-csv-parser.js');
 
+var input;
+var output;
+function test(separator, quote){
+	expect(parse(input, separator, quote)).toEqual(output);
+}
+
 // majority of unit tests adapted from codewars problem:
 // http://www.codewars.com/kata/525ca723b6aecee8c900033c
+
+describe('input validation', function(){
+
+	it('should throw if multicharacter separator', function(){
+		expect( () => {
+			return parse('ok', 'bad', null);
+		}).toThrow(new Error ('Invalid separator'));
+	});
+
+	it('should throw if multicharcter quote', function(){
+		expect( () => {
+			return parse('ok', null, 'bad');
+		}).toThrow(new Error ('Invalid quote'));
+	});
+
+	it('should throw if passed a non-string input', function(){
+		expect( () => {
+			return parse([1,2,3]);
+		}).toThrow(new Error ('Invalid input'));
+	});
+
+});
+
+
 describe('basic functionality', function(){
 
 	// TODO:
 	// valid csv?
 	// closed quotes?
-	
-	var input;
-	var output;
-	function test(){
-		expect(parse(input)).toEqual(output);
-	};
-	
 	
 	it('should handle a single row', function(){
 		input = '1,2,3';
@@ -54,13 +77,7 @@ describe('basic functionality', function(){
 });
 
 describe('quoted fields', function(){
-	
-	var input;
-	var output;
-	function test(){
-		expect(parse(input)).toEqual(output);
-	};
-	
+		
 	it('should handle quoted fields', function(){
 		input = '1,"two was here",3\n4,5,6';
 		output = [["1","two was here","3"],["4","5","6"]];
@@ -109,8 +126,54 @@ describe('quoted fields', function(){
 		test();
 	});
 	
-	it('should throw an error on finding a misplaced unescaped quote', function(){
-		
+	// DEBUG: should it?
+	xit('should throw an error on finding a misplaced unescaped quote', function(){
+		input = '1,"bad"quote",3\n4,5,6';
+		var index = input.indexOf('\"quote');
+		expect( () => { return parse(input) } ).toThrow(new Error('Invalid CSV at index '+index));
 	});
 
 });
+
+describe('alternate separators', function(){
+
+	it('should handle tab delineated files', function(){
+		input = '1\t2\t3\n4\t5\t6';
+		output = [['1','2','3'],['4','5','6']];
+		test('\t');
+	})
+
+	it('should handle weird separators', function(){
+		input = '1\\2\\3\n4\\5\\6';
+		output = [['1','2','3'],['4','5','6']];
+		test('\\');
+		input = '1*2*3\n4*5*6';
+		test('*');
+		input = '1 2 3\n4 5 6';
+		test(' ');
+	});
+
+});
+
+describe('alternate quotes', function(){
+
+	it('should handle single quotes', function(){
+		input = "1,'two ''quote''',3\n4,5,6";
+		output = [["1","two \'quote\'","3"],["4","5","6"]];
+		test(null, '\'');
+	});
+
+	it('should handle weird characters as the quote', function(){
+		input = '$a $$string$$ using $$ as the quote$.$multi\nline$.\n1.2.$3.4$';
+		output = [["a $string$ using $ as the quote","multi\nline",""],["1","2","3.4"]];
+		test('.','$');
+	});
+
+	// NOTE TO SELF IMPORTANT BUG
+	// 
+	it('should handle using backslash as the quote', function(){
+		input = '\\a \\\\string\\\\ using \\ as the quote\\.\\multi\nline\\.\n1.2.\\3.4\\';
+		output = [["a \\string\\ using \\ as the quote","multi\nline",""],["1","2","3.4"]];
+		test('.','\\');
+	});
+})
