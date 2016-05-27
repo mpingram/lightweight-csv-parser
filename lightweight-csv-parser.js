@@ -43,13 +43,20 @@ function parseCSV(input, separator, quote) {
     if (inQuotes){
       if(input[i] !== quote){
         value += input[i];
-
-      } else if (input[i] === quote && input[i+1] === quote){
-        value += quote; 
-      // else, this is an unescaped quote:
-      // we're no longer in quotes.
-      } else {
-        inQuotes = false;
+		
+	  // character is quote;
+	  // if the next character is a break it must
+	  // be an unescaped quote.
+      } else if (input[i+1] === separator || input[i+1] === '\n' || i+1 === endOfInput){
+        inQuotes = false; 
+		
+      // else, if the next character is another quote
+	  // this first quote is escaped.
+	  // add the escaped quote to the value and skip past
+	  // the next index, which is a quote.
+      } else if (input[i+1] === quote){
+        value += quote;
+		i++;
       }
 
     } else if (input[i] === separator){

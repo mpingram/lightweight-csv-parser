@@ -102,4 +102,15 @@ describe('quoted fields', function(){
 		output = [["1","two \"quote\"","3"],["4","5","6"]];
 		test();
 	});
+	
+	it('should handle several escaped quotes in a row', function(){
+		input = '1," here: \"\"\"\"",3\n4,5,6';
+		output = [['1',' here: ""','3'],['4','5','6']];
+		test();
+	});
+	
+	it('should throw an error on finding a misplaced unescaped quote', function(){
+		
+	});
+
 });
