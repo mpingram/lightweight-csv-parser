@@ -12,7 +12,7 @@ function parseCSV(input, separator, quote) {
 
   separator = separator || ',';
   quote = quote || '\"';
-
+  
   // input validation
   // --------------------
   if (typeof input !== 'string'){
@@ -41,8 +41,20 @@ function parseCSV(input, separator, quote) {
   var line = [];
   var value = '';
 
+  function pushValue(){
+  	line.push(value);
+  	value = '';
+  }
+  function pushLine(){
+  	line.push(value);
+  	output.push(line);
+  	line = [];
+  	value = '';
+  }
+
   var inQuotes = false;
   var endOfInput = input.length-1;
+
 
   for (var i=0;i<input.length;i++){
 
@@ -61,8 +73,7 @@ function parseCSV(input, separator, quote) {
 
       // character is quote and also the end of input
       } else if (i === endOfInput){
-        line.push(value);
-        output.push(line);
+        pushLine();
       
       // else, if the next character is another quote
       // this first quote is escaped.
@@ -70,7 +81,7 @@ function parseCSV(input, separator, quote) {
       // the next index, which is a quote.
       } else if (input[i+1] === quote){
         value += quote;
-		    i++;
+		i++;
 
       // otherwise, what?
       } else {
@@ -79,17 +90,13 @@ function parseCSV(input, separator, quote) {
       }
 
     } else if (input[i] === separator){
-      line.push(value);
-      value = '';
+      pushValue();
 
     } else if (input[i] === '\n' || i === endOfInput){
       if (i === endOfInput){
         value += input[i];
       }
-      line.push(value);
-      output.push(line);
-      value = '';
-      line = [];
+      pushLine();
 
     } else if (input[i] === quote){
       if (input[i-1] === separator || input[i-1] === '\n' || i === 0){
@@ -99,8 +106,7 @@ function parseCSV(input, separator, quote) {
     } else {
       value += input[i];
     }
-  }
-  
+  }  
   return output;
 }
 
