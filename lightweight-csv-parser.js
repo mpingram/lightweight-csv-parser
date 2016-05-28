@@ -57,7 +57,13 @@ function parseCSV(input, separator, quote) {
       // be an unescaped quote.
       } else if (input[i+1] === separator || input[i+1] === '\n' || i+1 === endOfInput){
         inQuotes = false; 
-		
+		  
+
+      // character is quote and also the end of input
+      } else if (i === endOfInput){
+        line.push(value);
+        output.push(line);
+      
       // else, if the next character is another quote
       // this first quote is escaped.
       // add the escaped quote to the value and skip past

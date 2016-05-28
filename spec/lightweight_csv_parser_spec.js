@@ -77,12 +77,25 @@ describe('basic functionality', function(){
 
 
 	// The kicker!
-	it('should handle a quoted field then a blank field followed by a newline', function(){
-		input = '1,"2",\n4,5,6';
-		output = [['1','2',''],['4','5','6']];
+	it('should handle a quoted field in the last index (?)', function(){
+		// isolating the issue
+
+		// this should work
+		input = '1,"2",\n"4,5",6';
+		output = [['1','2',''],['4,5','6']];
 		test();
+
+		// meanwhile, this fails
+		input = '1,"2",\n4,"5,6"';
+		output = [['1','2',''],['4','5,6']];
+		test();
+
+		input = '1,2,3\n4,"5,6"';
+		output = [['1','2','3'],['4','5,6']];
+		test();
+
 		input = '"a ""string"" using "" as the quote","multi\nline",\n1,2,"3,4"';
-		output = [['a "string" using " as the quote','multi\nline',''],['1','2','3.4']];
+		output = [['a "string" using " as the quote','multi\nline',''],['1','2','3,4']];
 		test();
 	});
 });
@@ -180,13 +193,10 @@ describe('alternate quotes', function(){
 		test('.','$');
 	});
 
-	// NOTE TO SELF IMPORTANT BUG
-	// 
 	it('should handle using backslash as the quote', function(){
 		input = '\\a \\\\string\\\\ using \\ as the quote\\.\\multi\nline\\.\n1.2.\\3.4\\';
 		output = [["a \\string\\ using \\ as the quote","multi\nline",""],["1","2","3.4"]];
 		test('.','\\');
 	});
 
-
-})
+});
