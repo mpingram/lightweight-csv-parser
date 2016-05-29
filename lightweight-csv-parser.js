@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Factory function for CSV Parser. Constructor takes a string.
  * 
@@ -124,9 +125,72 @@ function parseCSV() {
   };
 
 
-  self.toJson = function(){
-    console.log('worked?');
-    return self.output;
+  self.toJSON = function(params){
+
+    var jagged;
+    var firstRowFieldNames;
+
+    if(params === undefined){
+      jagged = false;
+      firstRowFieldNames = true;
+    } else {
+      if(params.jagged){
+        jagged = true;
+      }
+      if (!params.firstRowFieldNames){
+        firstRowFieldNames = false;
+      }
+    }
+
+    // in case something weird happened to
+    // the output
+    if (!Array.isArray(self.output)){
+      throw new Error('Malformed data in self.output - try parsing again.');
+    }
+
+    var arr = self.output;
+    var len = arr.length;
+    // for validation of non-jagged arrays.
+    var firstRowLen = arr[0].length;
+    var firstRow;
+
+    var json = [];
+    var record = {};
+
+    if(firstRowFieldNames){
+      firstRow = arr[0];
+    }
+
+
+    for (var i=0;i<len;i++){
+
+      if (i===0 && firstRowFieldNames){
+        i++;
+      }
+
+      for (var k=0;k<arr[i].length;k++){
+
+        var last = arr[i].length-1;
+
+        if(!jagged && k>=firstRowLen){
+          throw new Error('Uneven rows in CSV input. (if this is intended, pass {jagged:true} to .toJSON() method.');
+        }
+
+        if(firstRowFieldNames){
+          record[firstRow[k]] = arr[i][k];
+        } else {
+          record[k.toString()] = arr[i][k];
+        }
+
+        if(k === last){
+          json.push(record);
+          record = {};
+        }
+      }
+    }
+
+    return json;
+
   };
 
   self.toNestedArray = function(){
