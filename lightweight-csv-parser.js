@@ -161,8 +161,12 @@ function parseCSV() {
       firstRow = arr[0];
     }
 
+    var i = 0;
+    if(firstRowFieldNames){
+      i = 1;
+    }
 
-    for (var i=0;i<len;i++){
+    for (i;i<len;i++){
 
       if (i===0 && firstRowFieldNames){
         i++;
@@ -177,6 +181,9 @@ function parseCSV() {
         }
 
         if(firstRowFieldNames){
+          // DEBUG: compiler appears to do type conversion of
+          // string -> number without asking.
+          // This shouldn't be an issue...?
           record[firstRow[k]] = arr[i][k];
         } else {
           record[k.toString()] = arr[i][k];

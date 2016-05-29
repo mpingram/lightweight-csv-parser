@@ -14,7 +14,7 @@ var input;
 var output;
 
 
-describe('toNestedArray', function(){
+describe('toNestedArray:', function(){
 
 	function test(separator, quote){
 		expect(parser.parseData(input, separator, quote).toNestedArray()).toEqual(output);
@@ -215,67 +215,67 @@ describe('toNestedArray', function(){
 
 
 
-describe('toJSON', function(){
+describe('toJSON:', function(){
 
 	function test(separator, quote){
 		expect(parser.parseData(input, separator, quote).toJSON()).toEqual(output);
 	}
 
-	describe('valid JSON', function(){
-
-		it('should use only double quotes', function(){
-			input = '1,2,3\n4,5,6';
-			var parsed = parser.parseData(input);
-			expect(parsed.toJSON().indexOf('"').toBe(-1));
-		});
-
-		it('should return valid JSON', function(){
-			input = '1,2,3\n4,5,6';
-			var parsed = parser.parseData(input);
-			expect(JSON.stringify(parsed.toJSON())).not.toThrow();
-		});
-
-
+	// Is this the behavior we want?
+	xit('should handle a single row', function(){
+		input = '1,2,3';
+		output = [{
+			'1':'',
+			'2':'',
+			'3':''
+		}];
+		test();
 	});
 
-	describe('accurate JSON', function(){
+	// NB: parse ints or no?
 
-		it('should handle a single row', function(){
-			input = '1,2,3';
-			output = [{
-				'1':'',
-				'2':'',
-				'3':''
-			}];
-			test();
-		});
-
-		// NB: parse ints or no?
-
-		it('should handle simple input', function(){
-			input = '1,2,3\n4,5,6';
-			output = [{
-			    "1": 4,
-			    "2": 5,
-			    "3": 6
-			  }];
-			test();
-		});
-		
-		it('should handle empty fields', function(){
-			input = '1,,3\n4,5,\n,7,8';
-			output = [["1","","3"],["4","5",""],["","7","8"]];
-			test();
-		});
-
-
+	it('should handle simple input', function(){
+		input = '1,2,3\n4,5,6';
+		output = [{
+		    "1": "4",
+		    "2": "5",
+		    "3": "6"
+		  }];
+		test();
+	});
+	
+	it('should handle empty fields', function(){
+		input = '1,,3\n4,5,\n,8,9';
+		output = [{
+			"1": "4",
+			"": "5",
+			"3": ""
+		},
+		{
+			"1":"",
+			"":"8",
+			"3":"9"
+		}];
+		test();
 	});
 
+	it('should handle complex inputs', function(){
 
-
-
-
-
+		input = 'one,",,,,,..two,,,,,\n,,,,,,",three\n4,,6\n7,"8,9",10';
+		output = [
+		  {
+		    "one": '4',
+		    ",,,,,..two,,,,,\n,,,,,,": '',
+		    "three": "6"
+		  },
+		  {
+		    "one": '7',
+		    ",,,,,..two,,,,,\n,,,,,,": "8,9",
+		    "three": '10'
+		  }
+		];
+		test();
+	});
 
 
 });
