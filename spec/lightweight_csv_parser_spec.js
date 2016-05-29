@@ -1,32 +1,39 @@
 'use strict';
-var parse = require('../lightweight-csv-parser.js');
+var parseFactory = require('../lightweight-csv-parser.js');
 
-var input;
-var output;
-function test(separator, quote){
-	expect(parse(input, separator, quote)).toEqual(output);
-}
+
 
 // majority of unit tests adapted from codewars problem:
 // http://www.codewars.com/kata/525ca723b6aecee8c900033c
+var parser;
+beforeEach(function(){
+	parser = parseFactory();
+});
+
+var input;
+var output;
+
+function test(separator, quote){
+	expect(parser.parseData(input, separator, quote).toNestedArray()).toEqual(output);
+}
 
 describe('input validation', function(){
 
 	it('should throw if multicharacter separator', function(){
 		expect( () => {
-			return parse('ok', 'bad', null);
+			return parser.parseData('ok', 'bad', null).toNestedArray();
 		}).toThrow(new Error ('Invalid separator'));
 	});
 
 	it('should throw if multicharcter quote', function(){
 		expect( () => {
-			return parse('ok', null, 'bad');
+			return parser.parseData('ok', null, 'bad').toNestedArray();
 		}).toThrow(new Error ('Invalid quote'));
 	});
 
 	it('should throw if passed a non-string input', function(){
 		expect( () => {
-			return parse([1,2,3]);
+			return parser.parseData([1,2,3]).toNestedArray();
 		}).toThrow(new Error ('Invalid input'));
 	});
 
