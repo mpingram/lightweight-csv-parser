@@ -1,13 +1,5 @@
 'use strict';
-/**
- * Factory function for CSV Parser. Constructor takes a string.
- * 
- * @param input String, CSV input
- * @param separator String, single character used to separate fields.
- *        Defaults to ","
- * @param quote String, single character used to quote non-simple fields.
- *        Defaults to "\"".
- */
+
 function parseCSV() {
 
   var self = {};

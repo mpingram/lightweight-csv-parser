@@ -276,6 +276,4 @@ describe('toJSON:', function(){
 		];
 		test();
 	});
-
-
 });
