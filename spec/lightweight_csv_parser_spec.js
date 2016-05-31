@@ -278,7 +278,14 @@ describe('toJSON:', function(){
 	});
 	
 	it('should handle other also complex inputs', function(){
-		input = `test	field 2	field 3	field 4\nJUVO	RQNZ	ESNR	OZLY\nCMAI	XECU	UXYN	WNUR\nYCEE	ADHO	WMCE	WSNK\nHUUX	DCEN	DWUX	FCFX\nCXAI	XDBT	INNP	MOZM`;
+		
+		input = `test	field 2	field 3	field 4\n`+
+		`JUVO	RQNZ	ESNR	OZLY\n`+
+		`CMAI	XECU	UXYN	WNUR\n`+
+		`YCEE	ADHO	WMCE	WSNK\n`+
+		`HUUX	DCEN	DWUX	FCFX\n`+
+		`CXAI	XDBT	INNP	MOZM`;
+		
 		output = [
 		  {
 			"test": "JUVO",
